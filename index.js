@@ -5,34 +5,34 @@ let handle = (data, callback) => {
     url = url + data.endpoint;
     let requestObj;
 
-    switch (data.endpoint) {
-        case "price":
-            requestObj = {
-                fsym: data.fsym,
-                tsyms: data.tsyms
-            };
-            break;
-        case "pricemulti":
-        case "pricemultifull":
-            requestObj = {
-                fsyms: data.fsyms,
-                tsyms: data.tsyms
-            };
-            break;
-        case "generateAvg":
-            requestObj = {
-                fsym: data.fsym,
-                tsym: data.tsym,
-                e: data.exchange
-            };
-            break;
-        default:
-            requestObj = {
-                fsym: data.fsym,
-                tsyms: data.tsyms
-            };
-            break;
-    }
+    // switch (data.endpoint) {
+    //     case "price":
+    //         requestObj = {
+    //             fsym: data.fsym,
+    //             tsyms: data.tsyms
+    //         };
+    //         break;
+    //     case "pricemulti":
+    //     case "pricemultifull":
+    //         requestObj = {
+    //             fsyms: data.fsyms,
+    //             tsyms: data.tsyms
+    //         };
+    //         break;
+    //     case "generateAvg":
+    //         requestObj = {
+    //             fsym: data.fsym,
+    //             tsym: data.tsym,
+    //             e: data.exchange
+    //         };
+    //         break;
+    //     default:
+    //         requestObj = {
+    //             fsym: data.fsym,
+    //             tsyms: data.tsyms
+    //         };
+    //         break;
+    // }
 
     let options = {
         url: url,
@@ -76,18 +76,18 @@ exports.handler = (event, context, callback) => {
     });
 };
 
-exports.gcpservice = (req, res) => {
-    let data = {
-        id: req.body.id,
-        endpoint: req.body.data.endpoint || "price",
-        fsyms: req.body.data.fsyms || "",
-        fsym: req.body.data.coin || req.body.data.fsym || "",
-        tsyms: req.body.data.market || req.body.data.tsyms || "",
-        tsym: req.body.data.tsym || "",
-        exchange: req.body.data.exchange || ""
-    };
-
-    handle(data, (statusCode, responseData) => {
-        res.status(statusCode).send(responseData);
-    });
-};
+// exports.gcpservice = (req, res) => {
+//     let data = {
+//         id: req.body.id,
+//         endpoint: req.body.data.endpoint || "price",
+//         fsyms: req.body.data.fsyms || "",
+//         fsym: req.body.data.coin || req.body.data.fsym || "",
+//         tsyms: req.body.data.market || req.body.data.tsyms || "",
+//         tsym: req.body.data.tsym || "",
+//         exchange: req.body.data.exchange || ""
+//     };
+//
+//     handle(data, (statusCode, responseData) => {
+//         res.status(statusCode).send(responseData);
+//     });
+// };
