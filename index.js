@@ -26,7 +26,7 @@ let handle = (data, callback) => {
       }
       var process = spawn('python',["./keras.py",
                             training_model,
-                            test_x_stream, test_y_hash] );
+                            test_x_model, test_y_model] );
 
       process.stdout.on('training_model', (training_model) => {
         console.log(`stdout: ${training_model}`);
