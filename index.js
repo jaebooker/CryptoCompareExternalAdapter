@@ -1,9 +1,46 @@
 let request = require('request');
-
+const path = require('path');
+const {spawn} = require('child_process');
+// const ls = spawn('ls', ['-lh', '/usr']);
+const node = await IPFS.create()
 let handle = (data, callback) => {
-    let url = "https://min-api.cryptocompare.com/data/";
-    url = url + data.endpoint;
-    let requestObj;
+    var results;
+    var test_x_model;
+    var test_y_model;
+    const test_x_stream = node.cat(data.test_x_hash);
+    const test_y_stream = node.cat(data.test_y_hash);
+    for await (const chunk of test_x_stream) {
+      test_x_model += chunk
+    }
+    for await (const chunk of test_y_stream) {
+      test_y_model += chunk
+    }
+    // let url = "https://ipfs.infura.io:5001/api/v0/object/stat?arg=";
+    for i in range(0, len(data.training_model_hash)):
+      //url = url + data[i]
+      var training_model;
+      const training_stream = node.cat(data.training_model_hash[i]);
+
+      for await (const chunk of training_stream) {
+        training_model += chunk
+      }
+      var process = spawn('python',["./keras.py",
+                            training_model,
+                            test_x_stream, test_y_hash] );
+
+      process.stdout.on('training_model', (training_model) => {
+        console.log(`stdout: ${training_model}`);
+      });
+
+      process.stderr.on('training_model', (training_model) => {
+        console.error(`stderr: ${training_model}`);
+      });
+
+      process.on('close', (code) => {
+        results.append(code);
+        console.log(results)
+      });
+    // let requestObj;
 
     // switch (data.endpoint) {
     //     case "price":
@@ -34,30 +71,30 @@ let handle = (data, callback) => {
     //         break;
     // }
 
-    let options = {
-        url: url,
-        qs: requestObj,
-        json: true
-    };
+    // let options = {
+    //     url: url,
+    //     qs: requestObj,
+    //     json: true
+    // };
 
-    request(options, (error, response, body) => {
-        if (error || response.statusCode >= 400) {
-            callback(response.statusCode, {
-                jobRunID: data.id,
-                status: "errored",
-                error: error
-            });
-        } else {
-            let resp = body;
-            if (data.endpoint === "price")
-                resp.result = resp[data.tsyms];
-
-            callback(response.statusCode, {
-                jobRunID: data.id,
-                data: body
-            });
-        }
-    });
+    // request(options, (error, response, body) => {
+    //     if (error || response.statusCode >= 400) {
+    //         callback(response.statusCode, {
+    //             jobRunID: data.id,
+    //             status: "errored",
+    //             error: error
+    //         });
+    //     } else {
+    //         let resp = body;
+    //         if (data.endpoint === "price")
+    //             resp.result = resp[data.tsyms];
+    //
+    //         callback(response.statusCode, {
+    //             jobRunID: data.id,
+    //             data: body
+    //         });
+    //     }
+    // });
 };
 
 exports.handler = (event, context, callback) => {
