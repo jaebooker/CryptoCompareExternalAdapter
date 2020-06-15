@@ -4,23 +4,23 @@ const {spawn} = require('child_process');
 const node = await IPFS.create()
 let handle = (data, callback) => {
     var results;
-    var test_x_model;
-    var test_y_model;
+    var test_x_model = '';
+    var test_y_model = '';
     const test_x_stream = node.cat(data.test_x_hash);
     const test_y_stream = node.cat(data.test_y_hash);
     for await (const chunk of test_x_stream) {
-      test_x_model += chunk
+      test_x_model += chunk.toString()
     }
     for await (const chunk of test_y_stream) {
-      test_y_model += chunk
+      test_y_model += chunk.toString()
     }
 
     for i in range(0, len(data.training_hash_array)):
-      var training_model;
+      var training_model = '';
       const training_stream = node.cat(data.training_hash_array[i]);
 
       for await (const chunk of training_stream) {
-        training_model += chunk
+        training_model += chunk.toString()
       }
       var process = spawn('python',["./keras.py",
                             training_model,
