@@ -5,13 +5,11 @@ describe('createRequest', () => {
   const jobID = '1'
   const test_y = node.add('./x_test.txt')
   const test_x = node.add('./y_test.txt')
-  const data1_hash = node.add('./ires_train_1.txt')
+  const data1_hash = node.add(['./ires_train_1.txt'])
   context('successful calls', () => {
     const requests = [
-      { name: 'id not supplied', testData: { data: { base: 'ETH', quote: 'USD' } } },
-      { name: 'base/quote', testData: { id: jobID, data: { base: 'ETH', quote: 'USD' } } },
-      { name: 'from/to', testData: { id: jobID, data: { from: 'ETH', to: 'USD' } } },
-      { name: 'coin/market', testData: { id: jobID, data: { coin: 'ETH', market: 'USD' } } }
+      { name: 'id not supplied', testData: { data: { test_x: test_x, test_y: test_y. training_hash_array: data1_hash } } },
+      { name: 'test 1', testData: { id: jobID, data: { test_x: test_x, test_y: test_y, training_hash_array: data1_hash } } }
     ]
 
     requests.forEach(req => {
