@@ -1,43 +1,47 @@
 let request = require('request');
 const path = require('path');
 const {spawn} = require('child_process');
+const IPFS = require('ipfs')
+async function main (data, callback) {
 const node = await IPFS.create()
+var results;
+var test_x_model = '';
+var test_y_model = '';
+const test_x_stream = node.cat(data.test_x_hash);
+const test_y_stream = node.cat(data.test_y_hash);
+for await (const chunk of test_x_stream) {
+  test_x_model += chunk.toString()
+}
+for await (const chunk of test_y_stream) {
+  test_y_model += chunk.toString()
+}
+
+for i in range(0, len(data.training_hash_array)):
+  var training_model = '';
+  const training_stream = node.cat(data.training_hash_array[i]);
+
+  for await (const chunk of training_stream) {
+    training_model += chunk.toString()
+  }
+  var process = spawn('python',["./keras.py",
+                        training_model,
+                        test_x_model, test_y_model] );
+
+  process.stdout.on('training_model', (training_model) => {
+    console.log(`stdout: ${training_model}`);
+  });
+
+  process.stderr.on('training_model', (training_model) => {
+    console.error(`stderr: ${training_model}`);
+  });
+
+  process.on('close', (code) => {
+    results.append(code);
+    console.log(results)
+  });
+}
 let handle = (data, callback) => {
-    var results;
-    var test_x_model = '';
-    var test_y_model = '';
-    const test_x_stream = node.cat(data.test_x_hash);
-    const test_y_stream = node.cat(data.test_y_hash);
-    for await (const chunk of test_x_stream) {
-      test_x_model += chunk.toString()
-    }
-    for await (const chunk of test_y_stream) {
-      test_y_model += chunk.toString()
-    }
-
-    for i in range(0, len(data.training_hash_array)):
-      var training_model = '';
-      const training_stream = node.cat(data.training_hash_array[i]);
-
-      for await (const chunk of training_stream) {
-        training_model += chunk.toString()
-      }
-      var process = spawn('python',["./keras.py",
-                            training_model,
-                            test_x_model, test_y_model] );
-
-      process.stdout.on('training_model', (training_model) => {
-        console.log(`stdout: ${training_model}`);
-      });
-
-      process.stderr.on('training_model', (training_model) => {
-        console.error(`stderr: ${training_model}`);
-      });
-
-      process.on('close', (code) => {
-        results.append(code);
-        console.log(results)
-      });
+  main(data, callback);
 };
 
 exports.handler = (event, callback) => {

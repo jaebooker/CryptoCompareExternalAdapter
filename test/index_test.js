@@ -1,14 +1,23 @@
 const assert = require('chai').assert
 const createRequest = require('../index.js').createRequest
-const node = await IPFS.create()
+const IPFS = require('ipfs')
+var node;
+var test_x;
+var test_y;
+data1_hash;
+
+async function testing() {
+  const node = await IPFS.create()
+  test_y = node.add('./x_test.txt')
+  test_x = node.add('./y_test.txt')
+  data1_hash = node.add(['./ires_train_1.txt'])
+}
 describe('createRequest', () => {
   const jobID = '1'
-  const test_y = node.add('./x_test.txt')
-  const test_x = node.add('./y_test.txt')
-  const data1_hash = node.add(['./ires_train_1.txt'])
+  testing();
   context('successful calls', () => {
     const requests = [
-      { name: 'id not supplied', testData: { data: { test_x: test_x, test_y: test_y. training_hash_array: data1_hash } } },
+      { name: 'id not supplied', testData: { data: { test_x: test_x, test_y: test_y, training_hash_array: data1_hash } } },
       { name: 'test 1', testData: { id: jobID, data: { test_x: test_x, test_y: test_y, training_hash_array: data1_hash } } }
     ]
 
