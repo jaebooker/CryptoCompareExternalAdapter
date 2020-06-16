@@ -2,8 +2,14 @@ let request = require('request');
 const path = require('path');
 const {spawn} = require('child_process');
 const IPFS = require('ipfs')
-async function main (data, callback) {
-const node = await IPFS.create()
+async function main(data, callback) {
+//let handle = (data, callback) => {
+try {
+  const node = await IPFS.create()
+} catch (error) {
+  console.log('That did not go well.')
+  process.exit(1)
+}
 var results;
 var test_x_model = '';
 var test_y_model = '';
@@ -16,7 +22,7 @@ for await (const chunk of test_y_stream) {
   test_y_model += chunk.toString()
 }
 
-for i in range(0, len(data.training_hash_array)):
+for (var i =0; len(data.training_hash_array); i++){
   var training_model = '';
   const training_stream = node.cat(data.training_hash_array[i]);
 
@@ -39,6 +45,7 @@ for i in range(0, len(data.training_hash_array)):
     results.append(code);
     console.log(results)
   });
+};
 }
 let handle = (data, callback) => {
   main(data, callback);
@@ -57,3 +64,4 @@ exports.handler = (event, callback) => {
         callback(null, responseData);
     });
 };
+module.exports.handle = handle
