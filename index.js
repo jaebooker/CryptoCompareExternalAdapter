@@ -43,6 +43,8 @@ for (var i =0; len(data.training_hash_array); i++){
   });
 };
 }
+//
+//
 // let handle = (data, callback) => {
 //   main(data, callback);
 // };
