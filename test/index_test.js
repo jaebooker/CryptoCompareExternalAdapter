@@ -7,19 +7,22 @@ var test_y;
 var data1_hash;
 
 async function testing() {
-  try {
-    const node = await IPFS.create()
-  } catch (error){
-    console.log('That did not go well.')
-    process.exit(1)
-  }
-  test_y = node.add('./x_test.txt')
-  test_x = node.add('./y_test.txt')
-  data1_hash = node.add(['./ires_train_1.txt'])
+  const node = IPFS.create()
+  var nodeStream = node.then(function(node) {
+    if(node != None) {
+      test_y = node.add('./x_test.txt')
+      test_x = node.add('./y_test.txt')
+      data1_hash = node.add(['./ires_train_1.txt'])
+    } else {
+      console.log("nill")
+    }
+  })
+  await Promise.all(node)
 }
 
 describe('createRequest', () => {
-  const jobID = '1'
+  const jobID = '1';
+  testing();
   context('successful calls', () => {
     const requests = [
       { name: 'id not supplied', testData: { data: { test_x: test_x, test_y: test_y, training_hash_array: data1_hash } } },
