@@ -1,48 +1,94 @@
 let request = require('request');
 const path = require('path');
 const {spawn} = require('child_process');
-const IPFS = require('ipfs')
+//const IPFS = require('ipfs')
+const axios = require('axios');
+//const API_URL = 'https://ipfs.infura.io:5001/api/v0/object/get?arg='
+const API_URL = 'https://ipfs.io/ipfs/'
 //async function main(data, callback) {
+// function makeAPICall(path, callback) {
+//   // Attempt to make API call to path argument.
+//   // ...
+//   callback(undefined, res); // Or, callback(err, undefined); depending upon the API’s response.
+// }
 const handle = async (data, callback) => {
-const node = await IPFS.create()
-var results;
-var test_x_model = '';
-var test_y_model = '';
-const test_x_stream = node.cat(data.test_x_hash);
-const test_y_stream = node.cat(data.test_y_hash);
-for await (const chunk of test_x_stream) {
-  test_x_model += chunk.toString()
-}
-for await (const chunk of test_y_stream) {
-  test_y_model += chunk.toString()
-}
+  var results;
+  axios.get(API_URL + data.test_x_hash)
+    .then(response => {
+        test_x_model = response
+    })
+    .catch(error => console.log('Error', error));
 
-for (var i =0; len(data.training_hash_array); i++){
-  var training_model = '';
-  const training_stream = node.cat(data.training_hash_array[i]);
+  axios.get(API_URL + data.test_y_hash)
+    .then(response => {
+        test_y_model = response
+    })
+    .catch(error => console.log('Error', error));
+  for (var i =0; data.training_hash_array.length; i++){
 
-  for await (const chunk of training_stream) {
-    training_model += chunk.toString()
+    axios.get(API_URL + data.training_hash_array)
+      .then(response => {
+          var training_model = response
+          var process = spawn('python',["./keras.py",
+                                training_model,
+                                test_x_model, test_y_model] );
+
+          process.stdout.on('training_model', (training_model) => {
+            console.log(`stdout: ${training_model}`);
+          });
+
+          process.stderr.on('training_model', (training_model) => {
+            console.error(`stderr: ${training_model}`);
+          });
+
+          process.on('close', (code) => {
+            results.append(code);
+            console.log(results)
+          });
+      })
+      .catch(error => console.log('Error', error));
   }
-  var process = spawn('python',["./keras.py",
-                        training_model,
-                        test_x_model, test_y_model] );
-
-  process.stdout.on('training_model', (training_model) => {
-    console.log(`stdout: ${training_model}`);
-  });
-
-  process.stderr.on('training_model', (training_model) => {
-    console.error(`stderr: ${training_model}`);
-  });
-
-  process.on('close', (code) => {
-    results.append(code);
-    console.log(results)
-    return results;
-  });
-};
+  return results;
 }
+// const node = await IPFS.create()
+// var results;
+// var test_x_model = '';
+// var test_y_model = '';
+// const test_x_stream = node.cat(data.test_x_hash);
+// const test_y_stream = node.cat(data.test_y_hash);
+// for await (const chunk of test_x_stream) {
+//   test_x_model += chunk.toString()
+// }
+// for await (const chunk of test_y_stream) {
+//   test_y_model += chunk.toString()
+// }
+//
+// for (var i =0; len(data.training_hash_array); i++){
+//   var training_model = '';
+//   const training_stream = node.cat(data.training_hash_array[i]);
+//
+//   for await (const chunk of training_stream) {
+//     training_model += chunk.toString()
+//   }
+//   var process = spawn('python',["./keras.py",
+//                         training_model,
+//                         test_x_model, test_y_model] );
+//
+//   process.stdout.on('training_model', (training_model) => {
+//     console.log(`stdout: ${training_model}`);
+//   });
+//
+//   process.stderr.on('training_model', (training_model) => {
+//     console.error(`stderr: ${training_model}`);
+//   });
+//
+//   process.on('close', (code) => {
+//     results.append(code);
+//     console.log(results)
+//     return results;
+//   });
+// };
+// }
 //
 //
 // let handle = (data, callback) => {
