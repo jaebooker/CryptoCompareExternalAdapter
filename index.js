@@ -1,9 +1,10 @@
 let request = require('request');
 const path = require('path');
 const {spawn} = require('child_process');
-const IPFS = require('ipfs')
+//const IPFS = require('ipfs')
 const axios = require('axios');
-const API_URL = 'https://ipfs.infura.io:5001/api/v0/object/get?arg='
+//const API_URL = 'https://ipfs.infura.io:5001/api/v0/object/get?arg='
+const API_URL = 'https://ipfs.io/ipfs/'
 //async function main(data, callback) {
 // function makeAPICall(path, callback) {
 //   // Attempt to make API call to path argument.
@@ -23,7 +24,7 @@ const handle = async (data, callback) => {
         test_y_model = response
     })
     .catch(error => console.log('Error', error));
-  for (var i =0; len(data.training_hash_array); i++){
+  for (var i =0; data.training_hash_array.length; i++){
 
     axios.get(API_URL + data.training_hash_array)
       .then(response => {

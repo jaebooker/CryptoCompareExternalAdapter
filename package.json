@@ -15,6 +15,7 @@
   "homepage": "https://github.com/OracleFinder/CryptoCompareExternalAdapter",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.19.2",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "ipfs": "^0.46.0",
