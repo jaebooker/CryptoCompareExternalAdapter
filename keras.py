@@ -14,7 +14,7 @@ def write_in(train_model, x_test, y_test):
     y_test = pickle.loads(y_test)
     train_model = pickle.loads(train_model)
     test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
-    #test_dataset = test_dataset.batch(64)
+    test_dataset = test_dataset.batch(64)
     results = train_model.evaluate(test_dataset)
     return results
 
