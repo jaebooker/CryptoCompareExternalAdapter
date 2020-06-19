@@ -33,7 +33,7 @@ const handle = (data, callback) => {
     })
     .catch(error => console.log('Error', error));
 
-  for (var i =0; i < data.data.training_hash_array.length; i++){
+  for (var i =0; i < data.data.training_hash_array.length-1; i++){
     console.log("things are about to get a little... LOOP-y!")
     test_x_model.concat('./test/x_test.txt');
     test_y_model.concat('./test/y_test.txt');
