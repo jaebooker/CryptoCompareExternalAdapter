@@ -1,9 +1,10 @@
 let request = require('request');
 const path = require('path');
-const {spawn} = require('child_process');
+//const {spawn} = require('child_process');
 //const IPFS = require('ipfs')
 const axios = require('axios');
 //const API_URL = 'https://ipfs.infura.io:5001/api/v0/object/get?arg='
+var spawn = require("child_process").spawn;
 var API_URL = 'https://ipfs.io/ipfs/'
 //async function main(data, callback) {
 // function makeAPICall(path, callback) {
@@ -13,23 +14,28 @@ var API_URL = 'https://ipfs.io/ipfs/'
 // }
 const handle = (data, callback) => {
   var results = [];
-  var test_x_model;
-  var test_y_model;
+  var test_x_model = "";
+  var test_y_model = "";
   const test_x_api = API_URL.concat(data.data.test_x_hash);
   const test_y_api = API_URL.concat(data.data.test_y_hash);
+
   axios.get(test_x_api)
     .then(response => {
-        test_x_model = response
+        test_x_model.concat(response);
+        console.log(test_x_model);
     })
     .catch(error => console.log('Error', error));
 
   axios.get(test_y_api)
     .then(response => {
-        test_y_model = response
+        test_y_model.concat(response);
     })
     .catch(error => console.log('Error', error));
+
   for (var i =0; i < data.data.training_hash_array.length; i++){
     console.log("things are about to get a little... LOOP-y!")
+    test_x_model.concat('./test/x_test.txt');
+    test_y_model.concat('./test/y_test.txt');
     const training_api = API_URL.concat(data.data.training_hash_array[i]);
     axios.get(training_api)
       .then(response => {
@@ -37,13 +43,12 @@ const handle = (data, callback) => {
           var process = spawn('python',["./keras.py",
                                 training_model,
                                 test_x_model, test_y_model] );
-
-          process.stdout.on('training_model', (training_model) => {
-            console.log(`stdout: ${training_model}`);
+          process.stdout.on('data', (data) => {
+            console.log(`stdout: ${datal}`);
           });
 
-          process.stderr.on('training_model', (training_model) => {
-            console.error(`stderr: ${training_model}`);
+          process.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
           });
 
           process.on('close', (code) => {

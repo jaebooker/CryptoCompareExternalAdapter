@@ -3,7 +3,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 import pickle
-
+print("python")
 def write_in(train_model, x_test, y_test):
     x_test = pickle.loads(x_test)
     y_test = pickle.loads(y_test)
