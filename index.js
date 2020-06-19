@@ -4,29 +4,34 @@ const {spawn} = require('child_process');
 //const IPFS = require('ipfs')
 const axios = require('axios');
 //const API_URL = 'https://ipfs.infura.io:5001/api/v0/object/get?arg='
-const API_URL = 'https://ipfs.io/ipfs/'
+var API_URL = 'https://ipfs.io/ipfs/'
 //async function main(data, callback) {
 // function makeAPICall(path, callback) {
 //   // Attempt to make API call to path argument.
 //   // ...
 //   callback(undefined, res); // Or, callback(err, undefined); depending upon the API’s response.
 // }
-const handle = async (data, callback) => {
-  var results;
-  axios.get(API_URL + data.test_x_hash)
+const handle = (data, callback) => {
+  var results = [];
+  var test_x_model;
+  var test_y_model;
+  const test_x_api = API_URL.concat(data.data.test_x_hash);
+  const test_y_api = API_URL.concat(data.data.test_y_hash);
+  axios.get(test_x_api)
     .then(response => {
         test_x_model = response
     })
     .catch(error => console.log('Error', error));
 
-  axios.get(API_URL + data.test_y_hash)
+  axios.get(test_y_api)
     .then(response => {
         test_y_model = response
     })
     .catch(error => console.log('Error', error));
-  for (var i =0; data.training_hash_array.length; i++){
-
-    axios.get(API_URL + data.training_hash_array)
+  for (var i =0; i < data.data.training_hash_array.length; i++){
+    console.log("things are about to get a little... LOOP-y!")
+    const training_api = API_URL.concat(data.data.training_hash_array[i]);
+    axios.get(training_api)
       .then(response => {
           var training_model = response
           var process = spawn('python',["./keras.py",
@@ -42,7 +47,7 @@ const handle = async (data, callback) => {
           });
 
           process.on('close', (code) => {
-            results.append(code);
+            results.push(code);
             console.log(results)
           });
       })
@@ -97,7 +102,7 @@ const handle = async (data, callback) => {
 
 exports.handler = (event, callback) => {
     let data = {
-        id: event.id,
+        id: event.id || "2",
         endpoint: event.data.endpoint || "",
         test_x_hash: event.test_x_hash,
         test_y_hash: event.test_y_hash,
