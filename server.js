@@ -10,5 +10,6 @@ app.post('/', function (req, res) {
 });
 
 let listener = app.listen(process.env.PORT, function () {
-    console.log("Tensorfloracle External Adaptor listening on", listener.address().address + listener.address().port);
+    console.log("this is a listener")
+    //console.log("Tensorfloracle External Adaptor listening on", listener.address().address + listener.address().port);
 });
