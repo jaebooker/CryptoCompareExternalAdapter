@@ -7,9 +7,12 @@ from tensorflow.keras import layers
 import pickle
 print("python")
 def write_in(train_model, x_test, y_test):
-    x_test = pickle.load(x_test)
-    y_test = pickle.load(y_test)
-    train_model = pickle.load(train_model)
+    x_test = pickle.dumps(x_test)
+    y_test = pickle.dumps(y_test)
+    train_model = pickle.dumps(train_model)
+    x_test = pickle.loads(x_test)
+    y_test = pickle.loads(y_test)
+    train_model = pickle.loads(train_model)
     test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
     #test_dataset = test_dataset.batch(64)
     results = train_model.evaluate(test_dataset)
