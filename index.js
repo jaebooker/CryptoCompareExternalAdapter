@@ -22,18 +22,17 @@ const handle = (data, callback) => {
 
   axios.get(test_x_api)
     .then(response => {
-        test_x_model.concat(response);
-        console.log(test_x_model);
+        test_x_model = response;
     })
-    .catch(error => console.log('Error', error));
+    .catch(error => console.log("oh dear, we are in trouble"));
 
   axios.get(test_y_api)
     .then(response => {
-        test_y_model.concat(response);
+        test_y_model = response;
     })
-    .catch(error => console.log('Error', error));
+    .catch(error => console.log("oh dear, we are in trouble"));
 
-  for (var i =0; i < data.data.training_hash_array.length-1; i++){
+  for (var i =0; i < data.data.training_hash_array.length; i++){
     console.log("things are about to get a little... LOOP-y!")
     test_x_model.concat('./test/x_test.txt');
     test_y_model.concat('./test/y_test.txt');
@@ -45,19 +44,22 @@ const handle = (data, callback) => {
                                 training_model,
                                 test_x_model, test_y_model] );
           process.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
+            //console.log(`stdout: ${data}`);
+            console.log("we cool")
           });
 
           process.stderr.on('data', (data) => {
             console.error(`stderr: ${data}`);
+            console.log("we not cool")
           });
 
           process.on('close', (code) => {
             results.push(code);
-            console.log(results)
+            console.log("these be the results")
+            //console.log(results)
           });
       })
-      .catch(error => console.log('Error', error));
+      .catch(error => console.log("oh dear, we are in trouble"));
   }
   return results;
 }

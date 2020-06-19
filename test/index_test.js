@@ -35,14 +35,15 @@ describe('createRequest', () => {
       it(`${req.name}`, (done) => {
         console.log("requesting data")
         createRequest(req.testData, (statusCode, data) => {
+          //this.timeout(5000000);
           assert.equal(statusCode, 200)
-          // assert.equal(data.data.ID, jobID)
-          // assert.isNotEmpty(data.data)
+          //assert.equal(data.data.ID, jobID)
+          assert.isNotEmpty(data)
           // assert.isAbove(Number(data.data.result), 0)
           // assert.isAbove(Number(data.data.result), 0)
           done()
         })
-      })
+      }).timeout(2000)
     })
   })
 
