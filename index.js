@@ -45,7 +45,7 @@ const handle = (data, callback) => {
                                 training_model,
                                 test_x_model, test_y_model] );
           process.stdout.on('data', (data) => {
-            console.log(`stdout: ${datal}`);
+            console.log(`stdout: ${data}`);
           });
 
           process.stderr.on('data', (data) => {
