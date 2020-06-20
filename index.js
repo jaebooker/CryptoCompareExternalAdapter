@@ -1,5 +1,6 @@
 let request = require('request');
 const path = require('path');
+var util = require("util");
 //import * as tf from '@tensorflow/tfjs';
 //const {spawn} = require('child_process');
 //const IPFS = require('ipfs')
@@ -23,44 +24,42 @@ const handle = (data, callback) => {
   axios.get(test_x_api)
     .then(response => {
         test_x_model = response;
+        axios.get(test_y_api)
+          .then(response => {
+              test_y_model = response;
+              for (var i =0; i < data.data.training_hash_array.length; i++){
+                console.log("things are about to get a little... LOOP-y!")
+                //test_x_model = test_x_model.concat('./test/y_test.txt');
+                //test_y_model = test_y_model.concat('./test/y_test.txt');
+                const training_api = API_URL.concat(data.data.training_hash_array[i]);
+                axios.get(training_api)
+                  .then(response => {
+                      var training_model = response
+                      var process = spawn('python3',["./keras.py",
+                                            training_model,
+                                            test_x_model, test_y_model] );
+                      process.stdout.on('data', (data) => {
+                        console.log("we cool")
+                        console.log(`stdout: ${data}`);
+                      });
+
+                      process.stderr.on('data', (data) => {
+                        console.log("we not cool")
+                        console.error(`stderr: ${data}`);
+                      });
+
+                      process.on('close', (code) => {
+                        results.push(code);
+                        console.log("these be the results")
+                        console.log(results[0])
+                      });
+                  })
+                  .catch(error => console.log("oh dear, we are in trouble"));
+              }
+          })
+          .catch(error => console.log("oh dear, we are in trouble"));
     })
     .catch(error => console.log("oh dear, we are in trouble"));
-
-  axios.get(test_y_api)
-    .then(response => {
-        test_y_model = response;
-    })
-    .catch(error => console.log("oh dear, we are in trouble"));
-
-  for (var i =0; i < data.data.training_hash_array.length; i++){
-    console.log("things are about to get a little... LOOP-y!")
-    test_x_model.concat('./test/x_test.txt');
-    test_y_model.concat('./test/y_test.txt');
-    const training_api = API_URL.concat(data.data.training_hash_array[i]);
-    axios.get(training_api)
-      .then(response => {
-          var training_model = response
-          var process = spawn('python',["./keras.py",
-                                training_model,
-                                test_x_model, test_y_model] );
-          process.stdout.on('data', (data) => {
-            //console.log(`stdout: ${data}`);
-            console.log("we cool")
-          });
-
-          process.stderr.on('data', (data) => {
-            console.error(`stderr: ${data}`);
-            console.log("we not cool")
-          });
-
-          process.on('close', (code) => {
-            results.push(code);
-            console.log("these be the results")
-            //console.log(results)
-          });
-      })
-      .catch(error => console.log("oh dear, we are in trouble"));
-  }
   return results;
 }
 // const node = await IPFS.create()
