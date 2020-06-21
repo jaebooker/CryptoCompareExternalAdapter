@@ -35,31 +35,37 @@ const handle = (data, callback) => {
                 axios.get(training_api)
                   .then(response => {
                       var training_model = response
-                      var process = spawn('python3',["./keras.py",
+                      var process = spawn('python3',[ "./keras.py",
                                             training_model,
-                                            test_x_model, test_y_model] );
+                                            test_x_model, test_y_model ]);
                       process.stdout.on('data', (data) => {
                         console.log("we cool")
+                        var new_string = ""
+                        for (var i = 0; i < data.length; i++) {
+                          new_string += data[i]
+                        }
+                        results.push(data)
                         console.log(`stdout: ${data}`);
                       });
 
                       process.stderr.on('data', (data) => {
-                        console.log("we not cool")
+                        console.log("we not cool");
                         console.error(`stderr: ${data}`);
                       });
 
                       process.on('close', (code) => {
-                        results.push(code);
-                        console.log("these be the results")
-                        console.log(results[0])
+                        //results.push(code);
+                        console.log(results.join(""))
+                        console.log(code)
+                        console.log("the code^^^")
                       });
                   })
-                  .catch(error => console.log("oh dear, we are in trouble"));
+                  .catch(error => console.log(error, "oh dear, we are in trouble"));
               }
           })
-          .catch(error => console.log("oh dear, we are in trouble"));
+          .catch(error => console.log(error, "oh dear, we are in trouble"));
     })
-    .catch(error => console.log("oh dear, we are in trouble"));
+    .catch(error => console.log(error, "oh dear, we are in trouble"));
   return results;
 }
 // const node = await IPFS.create()
@@ -106,6 +112,22 @@ const handle = (data, callback) => {
 // let handle = (data, callback) => {
 //   main(data, callback);
 // };
+
+function string(string) {
+	return {
+		string: string,
+
+		toString: function () {
+			return "this " +
+				"\"" + string + "\" " +
+			"]";
+		},
+
+		valueOf: function () {
+			return string;
+		}
+	};
+}
 
 exports.handler = (event, callback) => {
     let data = {
