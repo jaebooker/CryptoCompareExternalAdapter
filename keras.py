@@ -5,6 +5,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 import pickle
+import argparse
 #import cPickle
 def write_in(train_model, x_test, y_test):
     x_test = pickle.dumps(x_test)
@@ -24,4 +25,6 @@ def main(train_model, x_test, y_test):
     return str(accuracy_results.to_json())
 
 if __name__ == '__main__':
-    main(sys.argv[0],sys.argv[1],sys.argv[2])
+    # print(sys.stdout.write(sys.argv[1][0:]))
+    # print(sys.stdout.write("\n"))
+    print(main(sys.argv[1],sys.argv[2], sys.argv[3]))
